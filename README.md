@@ -11,4 +11,4 @@
 ## How To Properly Remove MelonLoader from SN
 Go to your game folder and remove all files/folders that are not present in the following screenshot
 <br>![image](https://user-images.githubusercontent.com/115886896/197394278-d0078b76-794a-4d36-8802-7bee06b856bc.png)</br>
-Make sure to dubble-check to avoid mistakes
+Make sure to double-check to avoid mistakes
