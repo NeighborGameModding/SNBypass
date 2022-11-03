@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using MelonLoader;
+using System.Linq;
 using System.Reflection;
 
 namespace SNBypass;
@@ -20,15 +21,21 @@ internal static class ModuleCheckBypass
             return;
         }
 
-        var checkMethod = moduleCheckerType.GetMethod(nameof(ModuleChecker.Method_Public_Boolean_0));
-        if (checkMethod == null)
+        var nameStart = ModuleCheckerCheckMethod.Remove(ModuleCheckerCheckMethod.Length - 1);
+        var checkMethods = moduleCheckerType.GetMethods().Where(x => x.Name.StartsWith(nameStart)).ToArray();
+        if (checkMethods.Length == 0)
         {
             Melon<SNBypassMod>.Logger.Warning("Module Checker Version Unsupported");
             return;
         }
 
-        Melon<SNBypassMod>.Instance.HarmonyInstance.Patch(checkMethod, new HarmonyMethod(new PatchDel(Patch).Method));
-        Melon<SNBypassMod>.Logger.Msg("Module Checker Patched");
+        var patch = new HarmonyMethod(new PatchDel(Patch).Method);
+        foreach (var checkMethod in checkMethods)
+        {
+            Melon<SNBypassMod>.Instance.HarmonyInstance.Patch(checkMethod, patch);
+        }
+
+        Melon<SNBypassMod>.Logger.Msg($"Module Checker Patched ({checkMethods.Length} {(checkMethods.Length == 1 ? "method" : "methods")})");
 
         _initialized = true;
     }
